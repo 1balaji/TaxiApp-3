@@ -66,7 +66,7 @@ public class GcmIntentService extends IntentService {
     // This is just one simple example of what you might choose to do with
     // a GCM message.
     private void sendNotification(String msg) {
-        mNotificationManager = (NotificationManager)
+        /*mNotificationManager = (NotificationManager)
                 this.getSystemService(Context.NOTIFICATION_SERVICE);
 
         PendingIntent contentIntent = PendingIntent.getActivity(this, 0,
@@ -81,7 +81,30 @@ public class GcmIntentService extends IntentService {
         .setContentText(msg);
 
         mBuilder.setContentIntent(contentIntent);
-        mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
+        mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());*/
+        int icon = R.drawable.ic_launcher;
+        long when = System.currentTimeMillis();
+        NotificationManager notificationManager = (NotificationManager)
+                this.getSystemService(Context.NOTIFICATION_SERVICE);
+        Notification notification = new Notification(icon, msg, when);
+         
+        String title = this.getString(R.string.app_name);
+         
+        Intent notificationIntent = new Intent(this, MainActivity.class);
+        // set intent so it does not start a new activity
+        notificationIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP |
+                Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        PendingIntent intent =
+                PendingIntent.getActivity(this, 0, notificationIntent, 0);
+        notification.setLatestEventInfo(this, title, msg, intent);
+        notification.flags |= Notification.FLAG_AUTO_CANCEL;
+         
+        // Play default notification sound
+        notification.defaults |= Notification.DEFAULT_SOUND;
+         
+        // Vibrate if vibrate is enabled
+        notification.defaults |= Notification.DEFAULT_VIBRATE;
+        notificationManager.notify(0, notification);
     }
 
 }
